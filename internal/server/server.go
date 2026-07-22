@@ -1,19 +1,23 @@
 package server
 
 import (
-	"fmt"
 	"net"
 
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/logging"
+	"github.com/tobiaskrok/plop/internal/db"
 )
 
 type Server struct {
 	*ssh.Server
 }
 
-func New() (*Server, error) {
+func New(db db.DB) (*Server, error) {
+
+	sessionHandler := &SessionHandler{
+		db: db,
+	}
 	sshServer, err := wish.NewServer(
 		wish.WithAddress(net.JoinHostPort("localhost", "2222")),
 		wish.WithHostKeyPath("host_key"),
@@ -21,12 +25,7 @@ func New() (*Server, error) {
 			return true
 		}),
 		wish.WithMiddleware(
-			func(next ssh.Handler) ssh.Handler {
-				return func(sess ssh.Session) {
-					wish.Println(sess, fmt.Sprintf("Hello %s", sess.User()))
-					next(sess)
-				}
-			},
+			sessionHandler.HandleFunc,
 			logging.Middleware(),
 		),
 	)

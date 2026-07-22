@@ -10,12 +10,23 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
+	"github.com/tobiaskrok/plop/internal/db"
 	"github.com/tobiaskrok/plop/internal/server"
 )
 
 func main() {
 
-	srv, err := server.New()
+	db, err := db.NewSqlite(":memory:")
+	if err != nil {
+		//TODO: update connection string
+		log.Fatal("failed to connect to SQLite database", err)
+	}
+
+	if err := db.Migrate(context.Background()); err != nil {
+		log.Fatal("failed to run database migrations", err)
+	}
+
+	srv, err := server.New(db)
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
