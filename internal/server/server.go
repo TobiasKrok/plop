@@ -26,6 +26,7 @@ func New(db db.DB) (*Server, error) {
 		}),
 		wish.WithMiddleware(
 			sessionHandler.HandleFunc,
+			sessionHandler.UserAuth(),
 			logging.Middleware(),
 		),
 	)
@@ -36,4 +37,3 @@ func New(db db.DB) (*Server, error) {
 
 	return &Server{sshServer}, nil
 }
-
