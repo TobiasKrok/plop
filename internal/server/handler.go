@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/tobiaskrok/plop/internal/db"
+	"github.com/tobiaskrok/plop/internal/types"
 	gossh "golang.org/x/crypto/ssh"
 )
 
@@ -18,9 +19,14 @@ func (h *SessionHandler) UserAuth() func(next ssh.Handler) ssh.Handler {
 
 		return func(sesh ssh.Session) {
 
+			var (
+				user *types.User
+				err  error
+			)
+
 			fingerprint := gossh.FingerprintSHA256(sesh.PublicKey())
 			sesh.Context().SetValue(FingerprintContextKey, fingerprint)
-			user, err := h.db.FindUserByFingerprint(sesh.Context(), fingerprint)
+			user, err = h.db.FindUserByFingerprint(sesh.Context(), fingerprint)
 
 			if err != nil {
 				log.Error("unable to find fingerprint", "err", err)
@@ -29,18 +35,14 @@ func (h *SessionHandler) UserAuth() func(next ssh.Handler) ssh.Handler {
 			}
 
 			if user == nil {
-				wish.Errorln(sesh, "Welcome! Creating your account...")
-
-				user, err := h.db.CreateUser(sesh.Context(), sesh.User(), fingerprint)
+				user, err = h.db.CreateUser(sesh.Context(), sesh.User(), fingerprint)
 				if err != nil {
 					log.Error("unable to create user", "err", err)
 					wish.Fatalln(sesh, "❌ Unable to create your account, sorry!")
 					return
 				}
 				log.Info("user created", "fingerprint", fingerprint, "name", user.Name)
-				wish.Println(sesh, "Welcome! "+user.Name)
 			}
-
 			// sesh.Context().SetValue(logger.ContextKey, log)
 
 			log.Info("user authenticated", "fingerprint", fingerprint, "name", user.Name)
@@ -53,7 +55,7 @@ func (h *SessionHandler) HandleFunc(_ ssh.Handler) ssh.Handler {
 	return func(sesh ssh.Session) {
 
 		userSesh := &UserSession{sesh}
-
+		log.Info(sesh.Command())
 		if userSesh.IsPTY() {
 			wish.Println(sesh, "Not implemented yet...!")
 		}

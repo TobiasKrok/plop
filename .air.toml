@@ -1,0 +1,45 @@
+#:schema https://json.schemastore.org/any.json
+
+env_files = []
+root = "."
+testdata_dir = "testdata"
+tmp_dir = "tmp"
+
+[build]
+  args_bin = []
+  bin = "./tmp/main"
+  cmd = "go build -o ./tmp/main ."
+  delay = 500
+  entrypoint = ["./tmp/main"]
+  exclude_unchanged = false
+  follow_symlink = false
+  full_bin = ""
+  include_ext = ["go" ]
+  kill_delay = "0s"
+  log = "build-errors.log"
+  post_cmd = []
+  pre_cmd = []
+  rerun = false
+  rerun_delay = 100 
+  send_interrupt = true
+  stop_on_error = false
+
+[color]
+  app = ""
+  build = "yellow"
+  main = "magenta"
+  mode = ""
+  runner = "green"
+  watcher = "cyan"
+
+[log]
+  main_only = false
+  silent = false
+  time = true
+
+[misc]
+  clean_on_exit = true
+
+[screen]
+  clear_on_rebuild = false
+  keep_scroll = true
