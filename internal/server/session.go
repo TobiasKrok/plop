@@ -1,6 +1,8 @@
 package server
 
-import "github.com/charmbracelet/ssh"
+import (
+	"github.com/charmbracelet/ssh"
+)
 
 type UserSession struct {
 	ssh.Session
