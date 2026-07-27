@@ -110,8 +110,47 @@ func (s *Sqlite) FindUserByFingerprint(ctx context.Context, fingerprint string) 
 
 	return user, nil
 }
-func (s *Sqlite) CreateSession(ctx context.Context, session *types.Session) error {
 
+// TODO: max sessions
+func (s *Sqlite) CreateSession(ctx context.Context, name string) (*types.Session, error) {
+
+	tx, err := s.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+	u := &types.Session{
+		ID:        utils.NewID(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		Name:      name,
+	}
+
+	const query = `
+
+		INSERT INTO users (
+	id,
+	created_at,
+	updated_at,
+	name,
+	fingerprint
+	) VALUES (?, ?, ?, ?, ?)
+		`
+
+	if _, err := tx.ExecContext(ctx, query,
+		u.ID,
+		u.CreatedAt,
+		u.UpdatedAt,
+		u.Name,
+		u.Fingerprint,
+	); err != nil {
+		return nil, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+	return u, nil
 	return nil
 }
 
