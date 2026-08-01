@@ -16,8 +16,6 @@ type SessionHandler struct {
 	db db.DB
 }
 
-// authenticate looks up the user by their public key fingerprint,
-// creating an account on first connection.
 func (h *SessionHandler) authenticate(sesh ssh.Session) (*types.User, error) {
 	fingerprint := gossh.FingerprintSHA256(sesh.PublicKey())
 
@@ -33,7 +31,7 @@ func (h *SessionHandler) authenticate(sesh ssh.Session) (*types.User, error) {
 		}
 		log.Info("user created", "fingerprint", fingerprint, "name", user.Name)
 	}
-
+	fmt.Println("YABABABDODOOOOO")
 	log.Info("user authenticated", "fingerprint", fingerprint, "name", user.Name)
 	return user, nil
 }
@@ -48,46 +46,18 @@ func (h *SessionHandler) HandleFunc(next ssh.Handler) ssh.Handler {
 			return
 		}
 
-		if len(sesh.Command()) > 0 {
-			cmdr := commands.New(h.db, sesh, user)
-			args := append([]string{"plop"}, sesh.Command()...)
-			if err := cmdr.Root().Run(sesh.Context(), args); err != nil {
-				log.Error("command failed", "err", err)
-			}
+		userSesh := &UserSession{sesh}
+		if userSesh.IsPTY() && len(sesh.Command()) == 0 {
+			wish.Println(sesh, "Not implemented yet...!")
+
 			return
 		}
 
-		userSesh := &UserSession{sesh}
-		if userSesh.IsPTY() {
-			wish.Println(sesh, "Not implemented yet...!")
+		cmdr := commands.New(h.db, sesh, user)
+		args := append([]string{"plop"}, sesh.Command()...)
+		if err := cmdr.Root().Run(sesh.Context(), args); err != nil {
+			log.Error("command failed", "err", err)
+			return
 		}
 	}
 }
-
-// // copied from snips.sh
-// func readFile(sesh *UserSession, maxSize uint64) ([]byte, error) {
-// 	content := make([]byte, 0)
-// 	size := uint64(0)
-// 	for {
-// 		buf := make([]byte, UploadBufferSize)
-// 		n, err := sesh.Read(buf)
-// 		isEOF := errors.Is(err, io.EOF)
-// 		if err != nil && !isEOF {
-// 			return nil, err
-// 		}
-//
-// 		size += uint64(n)
-// 		content = append(content, buf[:n]...)
-//
-// 		if size > maxSize {
-// 			return nil, ErrFileTooLarge
-// 		}
-//
-// 		if isEOF {
-// 			if size == 0 {
-// 				return nil, ErrEmptyContent
-// 			}
-// 			return content, nil
-// 		}
-// 	}
-// }

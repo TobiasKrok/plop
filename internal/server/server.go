@@ -19,6 +19,7 @@ func New(db db.DB) (*Server, error) {
 		db: db,
 	}
 	sshServer, err := wish.NewServer(
+		//TODO: make this configurable
 		wish.WithAddress(net.JoinHostPort("localhost", "2222")),
 		wish.WithHostKeyPath("host_key"),
 		wish.WithPublicKeyAuth(func(_ ssh.Context, _ ssh.PublicKey) bool {

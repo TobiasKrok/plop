@@ -1,11 +1,13 @@
 package utils
 
-import id "github.com/matoous/go-nanoid/v2"
+import (
+	id "github.com/matoous/go-nanoid/v2"
+)
 
 func NewID() string {
 	return id.Must(7)
 }
 
 func NewShortId() string {
-	return id.Must(5)
+	return id.MustGenerate("abcdefghijklmnopqrstuvwxyz123456789", 5)
 }
