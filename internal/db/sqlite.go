@@ -301,4 +301,21 @@ func (s *Sqlite) FindSessionById(ctx context.Context, sessionID string) (*types.
 
 func (s *Sqlite) UpdateUser(ctx context.Context, user *types.User) error {
 
+	user.UpdatedAt = time.Now().UTC()
+	const query = `
+		UPDATE users
+		SET updated_at = ?, fingerprint = ?, name = ?, current_session = ?
+		WHERE id = ?
+	`
+
+	if _, err := s.ExecContext(ctx, query,
+		user.UpdatedAt,
+		user.Fingerprint,
+		user.Name,
+		user.CurrentSession,
+	); err != nil {
+		return err
+	}
+
+	return nil
 }

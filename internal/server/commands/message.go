@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/tobiaskrok/plop/internal/types"
-	"github.com/tobiaskrok/plop/internal/ui/term"
 	"github.com/tobiaskrok/plop/internal/utils"
 )
 
@@ -48,7 +47,6 @@ func (c *Commander) createMessage() (*types.Message, error) {
 		return nil, err
 	}
 
-	term.RenderSessionCreated(c.sesh, *sesh)
 	c.log.Info("message created", "message_id", message.ID, "session_id", sesh.ID, "len", message.Size)
 	return nil, nil
 }

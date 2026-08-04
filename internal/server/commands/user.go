@@ -10,6 +10,12 @@ func (c *Commander) setUserCurrentSession(sessionId string) error {
 		return err
 	}
 	if session == nil {
-		return fmt.Errorf("session '%s' does not exist")
+		return fmt.Errorf("session '%s' does not exist", sessionId)
 	}
+	c.user.CurrentSession = sessionId
+	err = c.db.UpdateUser(c.sesh.Context(), c.user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
