@@ -31,7 +31,6 @@ func (h *SessionHandler) authenticate(sesh ssh.Session) (*types.User, error) {
 		}
 		log.Info("user created", "fingerprint", fingerprint, "name", user.Name)
 	}
-	fmt.Println("YABABABDODOOOOO")
 	log.Info("user authenticated", "fingerprint", fingerprint, "name", user.Name)
 	return user, nil
 }

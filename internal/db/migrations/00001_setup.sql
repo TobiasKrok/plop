@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `updated_at` datetime NOT NULL,
     `name` text NOT NULL,
     `fingerprint` text NOT NULL,
+    `current_session` text -- maybe this should be normalzed into its own table?
     PRIMARY KEY (`id`)
 );
 

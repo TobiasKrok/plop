@@ -13,11 +13,10 @@ func RenderSessionCreated(sesh ssh.Session, session types.Session) {
 		Color: styles.Colors.Success,
 	}
 
-	noti.Messagef(`Continue this session: 
+	noti.Messagef(` Continue sending to this session via: 
+ssh s:%s@plop.sh 
 
-		%$
-
-	`)
+	`, session.ID)
 
 	noti.Render(sesh)
 }

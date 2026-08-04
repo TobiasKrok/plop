@@ -296,6 +296,9 @@ func (s *Sqlite) FindSessionById(ctx context.Context, sessionID string) (*types.
 		}
 		return nil, err
 	}
-
 	return sesh, nil
+}
+
+func (s *Sqlite) UpdateUser(ctx context.Context, user *types.User) error {
+
 }

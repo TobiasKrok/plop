@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/charmbracelet/wish"
 	"github.com/tobiaskrok/plop/internal/types"
 	"github.com/tobiaskrok/plop/internal/ui/term"
 	"github.com/tobiaskrok/plop/internal/utils"
@@ -48,8 +47,6 @@ func (c *Commander) createMessage() (*types.Message, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	wish.Println(c.sesh, "YOOOOOOOOO")
 
 	term.RenderSessionCreated(c.sesh, *sesh)
 	c.log.Info("message created", "message_id", message.ID, "session_id", sesh.ID, "len", message.Size)
